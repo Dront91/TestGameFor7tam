@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
     [SerializeField] private Text _healthBarText;
     [SerializeField] private Text _coinBarText;
     [SerializeField] private GameObject _projectilePrefab;
+    [SerializeField] private GameObject _visualModel;
     public GameObject ProjectilePrefab => _projectilePrefab;
     private int _currentHealth;
     private float _timer;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
     private float b;
     private float _doubleTapThreshold = 0.3f;
     private int _tapCount;
+    private float _rotateSpeed = 2f;
     private void Start()
     {
         _photonView = GetComponent<PhotonView>();
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
             float speed = 3f * Time.deltaTime;
             Vector3 translation = VirtualJoystick.Instance.Value * speed;
             transform.Translate(translation);
+            RotateIcon();
             if (Input.touchCount == 1 )
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Ended )
@@ -124,6 +127,15 @@ public class PlayerController : MonoBehaviour, IPunObservable
         g = UnityEngine.Random.Range(0.1f, 1f);
         b = UnityEngine.Random.Range(0.1f, 1f);
         _sprite.color = new Color(r, g, b);
+    }
+    private void RotateIcon()
+    {
+        if (VirtualJoystick.Instance.FireDirection != Vector3.zero)
+        {
+            Quaternion q;
+            q = Quaternion.LookRotation(VirtualJoystick.Instance.FireDirection, _visualModel.transform.up);
+            _visualModel.transform.rotation = Quaternion.Lerp(_visualModel.transform.rotation, q, _rotateSpeed * Time.deltaTime);
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
