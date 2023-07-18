@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour, IPunObservable
     }
     private void UpdateHealthUI()
     {
-        _healthBarImage.fillAmount = _currentHealth * 100 / _maxHealth;
+        _healthBarImage.fillAmount = (float)(((float)_currentHealth * 100 / (float)_maxHealth) / 100);
         _healthBarText.text = _currentHealth + "/" + _maxHealth;
     }
     private void UpdateCoinUI()
